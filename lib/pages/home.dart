@@ -5,6 +5,8 @@ import '../models/tweet.dart';
 class Home extends StatelessWidget {
   const Home({super.key});
 
+  get navigationBar => null;
+
   // Affiche une icône + un compteur (affichage seul)
   Widget _buildTweetAction(IconData icon, String count) {
     return Row(
@@ -61,7 +63,7 @@ class Home extends StatelessWidget {
             dividerHeight: 0.5,
           ),
         ),
-                body: TabBarView(
+        body: TabBarView(
           children: [
             ListView.builder(
               itemCount: Tweet.sampleTweets.length,
@@ -88,7 +90,9 @@ class Home extends StatelessWidget {
                         const SizedBox(width: 4),
                         Text(tweet.handle, style: const TextStyle(color: Colors.white54)),
                         const SizedBox(width: 4),
-                        Text('· ${tweet.time}', style: const TextStyle(color: Colors.white54)),
+                        Text(' ⦿  ${tweet.time}', style: const TextStyle(color: Colors.white54)),
+                        Spacer(),
+                        Text('•••', style: const TextStyle(color: Colors.white54)),
                       ],
                     ),
                     subtitle: Column(
@@ -116,6 +120,19 @@ class Home extends StatelessWidget {
             Center(
               child: Text('Abonnements', style: const TextStyle(color: Colors.white, fontSize: 20)),
             ),
+          ],
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed, // nécessaire avec 5 items
+          backgroundColor: Colors.black,
+          selectedItemColor: Colors.white,
+          unselectedItemColor: Colors.white54,
+          items: const [
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Accueil'),
+            BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Recherche'),
+            BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Communautés'),
+            BottomNavigationBarItem(icon: Icon(Icons.notifications), label: 'Notifications'),
+            BottomNavigationBarItem(icon: Icon(Icons.mail_outline), label: 'Messages'),
           ],
         ),
       ),
