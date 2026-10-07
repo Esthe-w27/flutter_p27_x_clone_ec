@@ -5,6 +5,17 @@ import '../models/tweet.dart';
 class Home extends StatelessWidget {
   const Home({super.key});
 
+  // Affiche une icône + un compteur (affichage seul)
+  Widget _buildTweetAction(IconData icon, String count) {
+    return Row(
+      children: [
+        Icon(icon, size: 16, color: Colors.white54),
+        const SizedBox(width: 4),
+        Text(count, style: const TextStyle(color: Colors.white54)),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -18,7 +29,7 @@ class Home extends StatelessWidget {
           leading: Center(
             child: CircleAvatar(
               radius: 16,
-              foregroundImage: NetworkImage('assets/avatar-icon.png'),
+              foregroundImage: AssetImage('assets/avatar-icon.png'), // ✅ AssetImage
             ),
           ),
           actions: [
@@ -38,7 +49,7 @@ class Home extends StatelessWidget {
           bottom: const TabBar(
             labelColor: Colors.white,
             indicatorColor: Colors.blue,
-            overlayColor: WidgetStatePropertyAll(Color.fromARGB(19, 160, 160, 160)), 
+            overlayColor: WidgetStatePropertyAll(Color.fromARGB(19, 160, 160, 160)),
             splashBorderRadius: BorderRadius.all(Radius.circular(30)),
             tabs: [
               Tab(text: 'Pour vous'),
@@ -50,45 +61,54 @@ class Home extends StatelessWidget {
             dividerHeight: 0.5,
           ),
         ),
-        body: TabBarView(
+                body: TabBarView(
           children: [
             ListView.builder(
-              itemCount: 4,
+              itemCount: Tweet.sampleTweets.length,
               itemBuilder: (context, index) {
                 final tweet = Tweet.sampleTweets[index];
-                return ListTile(
-                  leading: CircleAvatar(
-                    radius: 24,
-                    backgroundImage: AssetImage(tweet.profilePictureUrl),
+                return Container(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  decoration: const BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(color: Colors.white24, width: 0.5),
+                    ),
                   ),
-                  title: Row(
-                    children: [
-                      Text(tweet.name, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                      const SizedBox(width: 4),
-                      if (tweet.verified)
-                        const Icon(Icons.check_circle, color: Colors.blue, size: 16),
-                      const SizedBox(width: 4),
-                      Text(tweet.handle, style: const TextStyle(color: Colors.white54)),
-                      const SizedBox(width: 4),
-                      Text('· ${tweet.time}', style: const TextStyle(color: Colors.white54)),
-                    ],
-                  ),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 4),
-                      Text(tweet.content, style: const TextStyle(color: Colors.white)),
-                      const SizedBox(height: 8),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(static const IconData comment = IconData(0xe17e, fontFamily: 'MaterialIcons'), tweet.comments),
-                          Text(static const IconData repeat_on = IconData(0xe520, fontFamily: 'MaterialIcons'), tweet.retweets),
-                          Text(static const IconData favorite_border = IconData(0xe858, fontFamily: 'MaterialIcons'), tweet.likes),
-                          Text(static const IconData remove_red_eye_outlined = IconData(0xe417, fontFamily: 'MaterialIcons'), tweet.views),
-                        ],
-                      ),
-                    ],
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      radius: 24,
+                      backgroundImage: AssetImage(tweet.profilePictureUrl),
+                    ),
+                    title: Row(
+                      children: [
+                        Text(tweet.name, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                        const SizedBox(width: 4),
+                        if (tweet.verified)
+                          const Icon(Icons.check_circle, color: Colors.blue, size: 16),
+                        const SizedBox(width: 4),
+                        Text(tweet.handle, style: const TextStyle(color: Colors.white54)),
+                        const SizedBox(width: 4),
+                        Text('· ${tweet.time}', style: const TextStyle(color: Colors.white54)),
+                      ],
+                    ),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 4),
+                        Text(tweet.content, style: const TextStyle(color: Colors.white)),
+                        const SizedBox(height: 8),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            _buildTweetAction(Icons.comment, tweet.comments),
+                            _buildTweetAction(Icons.repeat_on, tweet.retweets),
+                            _buildTweetAction(Icons.favorite_border, tweet.likes),
+                            _buildTweetAction(Icons.remove_red_eye_outlined, tweet.views),
+                            _buildTweetAction(Icons.share, ''),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 );
               },
