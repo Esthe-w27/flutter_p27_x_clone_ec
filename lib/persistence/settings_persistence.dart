@@ -10,7 +10,7 @@ class SettingsPersistence {
   Future<Map<String, String>> loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
     final username = prefs.getString('username') ?? '';
-    final backgroundImage = prefs.getString('backgroundImage') ?? '';
+    final backgroundImage = prefs.getString('back') ?? '';
     return {
       'username': username,
       'backgroundImage': backgroundImage,

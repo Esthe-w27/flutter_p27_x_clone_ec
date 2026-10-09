@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'home.dart';
 
 class LoginPage extends StatefulWidget {
@@ -11,6 +12,14 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   bool _isPasswordVisible = true;
   final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _prefs = SharedPreferencesAsync();
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,33 +45,34 @@ class _LoginPageState extends State<LoginPage> {
                   color: Colors.white,
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextFormField(
+                controller: _emailController,
                 style: const TextStyle(color: Colors.white),
-                cursorColor: Colors.white, 
+                cursorColor: Colors.white,
                 decoration: const InputDecoration(
                   labelText: 'Email',
-                  labelStyle: TextStyle(color: Colors.white), 
-                  floatingLabelStyle: TextStyle(color: Colors.white), 
+                  labelStyle: TextStyle(color: Colors.white),
+                  floatingLabelStyle: TextStyle(color: Colors.white),
                   border: OutlineInputBorder(),
                   enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white54), 
+                    borderSide: BorderSide(color: Colors.white54),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white), 
+                    borderSide: BorderSide(color: Colors.white),
                   ),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Entrez votre email.';
                   }
-                  if (value != true && !RegExp(r'@gmail\.com$').hasMatch(value)) {
+                  if (!RegExp(r'@gmail\.com$').hasMatch(value)) {
                     return 'Entrez un email valide. (Exemple : user@gmail.com)';
-                  } 
+                  }
                   return null;
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextFormField(
                 style: const TextStyle(color: Colors.white),
                 cursorColor: Colors.white,
@@ -79,7 +89,7 @@ class _LoginPageState extends State<LoginPage> {
                     borderSide: BorderSide(color: Colors.white),
                   ),
                   suffixIcon: IconButton(
-                    icon: const Icon(Icons.visibility, color: Colors.white), 
+                    icon: const Icon(Icons.visibility, color: Colors.white),
                     onPressed: () {
                       setState(() {
                         _isPasswordVisible = !_isPasswordVisible;
@@ -91,14 +101,14 @@ class _LoginPageState extends State<LoginPage> {
                   if (value == null || value.isEmpty) {
                     return 'Entrez votre mot de passe.';
                   }
-                  if (value.length < 6) {
-                    return 'Le mot de passe doit contenir au moins 6 caractères.';
+                  if (value.length < 12) {
+                    return 'Le mot de passe doit contenir au moins 12 caractères.';
                   }
                   return null;
                 },
               ),
-              SizedBox(height: 20),
-              Spacer(),
+              const SizedBox(height: 20),
+              const Spacer(),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -106,8 +116,12 @@ class _LoginPageState extends State<LoginPage> {
                     backgroundColor: Colors.white,
                     foregroundColor: Colors.black,
                   ),
-                  onPressed: () {
+                  onPressed: () async {
                     if (_formKey.currentState!.validate()) {
+                      await _prefs.setString('email', _emailController.text);
+                      await _prefs.setBool('estConnecte', true);
+
+                      if (!mounted) return;
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(builder: (context) => const Home()),
